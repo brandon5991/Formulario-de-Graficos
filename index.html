@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Graficos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h2 {
+            color: #002147;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            color: #002147;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        input, select {
+            margin: 5px 0;
+            padding: 8px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        button {
+            background-color: #002147;
+            color: white;
+            padding: 8px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        button:hover {
+            background-color: #004080;
+        }
+
+        button:focus {
+            outline: 2px solid #002147;
+            outline-offset: 2px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        canvas {
+            width: 100%;
+            height: 50vh;
+            max-width: 100%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #002147;
+            color: white;
+            font-size: 0.9em;
+            width: 100%;
+            margin-top: auto;
+            position: relative;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Formulario de Ventas por Mes</h2>
+<form id="salesForm">
+    <label for="months">Meses (separados por comas):</label>
+    <input type="text" id="months" name="months" placeholder="Enero, Febrero, Marzo" required>
+
+    <label for="sales">Ventas (separados por comas):</label>
+    <input type="text" id="sales" name="sales" placeholder="1000, 1200, 900" required>
+    
+    <button type="submit">Generar Gráfico</button>
+</form>
+
+<h3>Gráfico de Ventas por Mes</h3>
+<div class="container">
+    <canvas id="salesChart"></canvas>
+</div>
+
+<script>
+function generateChart(months, sales) {
+    var ctx = document.getElementById('salesChart').getContext('2d');
+    var salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Ventas',
+                data: sales,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+document.getElementById('salesForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    const months = document.getElementById('months').value.split(',').map(item => item.trim());
+    const sales = document.getElementById('sales').value.split(',').map(item => item.trim());
+
+    const salesNumbers = sales.map(sale => parseFloat(sale));
+    const invalidSales = salesNumbers.some(isNaN);
+    
+    if (months.length !== sales.length) {
+        alert('Los meses y las ventas deben tener la misma cantidad de elementos.');
+        return;
+    }
+    
+    if (invalidSales) {
+        alert('Por favor ingresa valores numéricos válidos para las ventas.');
+        return;
+    }
+    
+    generateChart(months, salesNumbers);
+});
+</script>
+
+<footer>
+    &copy; 2024 Formulario de Graficos. Todos los derechos reservados.
+</footer>
+
+</body>
+</html>
